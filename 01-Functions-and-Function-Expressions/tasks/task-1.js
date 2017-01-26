@@ -7,17 +7,18 @@
 		throws if any of the elements is not convertible to Number	
 
 */
-
-function sum(numbers) {
-	if (numbers.length === 0) {
-		return null;
-	}
-	for (let i in numbers) {
-		if (Number.isNaN(Number(numbers[i]))) {
-			throw 'Not all values are numbers!';
+function solve() {
+	return function sum(numbers) {
+		if (numbers.length === 0) {
+			return null;
 		}
+		for (let i in numbers) {
+			if (Number.isNaN(Number(numbers[i]))) {
+				throw 'Not all values are numbers!';
+			}
+		}
+		return numbers.reduce((x, y) => x + +(y), 0);
 	}
-	return numbers.reduce((x, y) => x + +(y), 0);
 }
 
-module.exports = sum;
+module.exports = solve;
