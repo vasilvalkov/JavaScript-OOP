@@ -94,18 +94,18 @@ class LinkedList {
     }
 
     prepend(value) {
-        function prependValue(obj, value) {
+        function prependValue(value) {
             const node = new listNode(value);
-            obj._head.previous = node;
-            node.next = obj._head;
-            obj._head = node;
-            obj._length += 1;
+            this._head.previous = node;
+            node.next = this._head;
+            this._head = node;
+            this._length += 1;
         }
 
         const len = arguments.length;
 
         if (len === 1 && this._head !== null) {
-            prependValue(this, value);
+            prependValue.call(this, value);
         } else {
             for (let i = len - 1; i >= 0; i -= 1) {
                 if (this._head === null) {
@@ -117,7 +117,7 @@ class LinkedList {
 
                     continue;
                 }
-                prependValue(this, arguments[i]);
+                prependValue.call(this, arguments[i]);
             }
         }
 
@@ -125,17 +125,17 @@ class LinkedList {
     }
 
     append(value) {
-        function appendValue(obj, value) {
+        function appendValue(value) {
             const node = new listNode(value);
-            node.previous = obj._tail;
-            obj._tail.next = node;
-            obj._tail = obj._tail.next;
-            obj._length += 1;
+            node.previous = this._tail;
+            this._tail.next = node;
+            this._tail = this._tail.next;
+            this._length += 1;
         }
         const len = arguments.length;
 
         if (len === 1 && this._head !== null) {
-            appendValue(this, value);
+            appendValue.call(this, value);
         } else {
             for (let i = 0; i < len; i += 1) {
                 if (this._head === null) {
@@ -147,7 +147,7 @@ class LinkedList {
 
                     continue;
                 }
-                appendValue(this, arguments[i]);
+                appendValue.call(this, arguments[i]);
             }
         }
 
