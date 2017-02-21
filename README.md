@@ -9,3 +9,4 @@ Homework, exam practices and exam tasks
 1. [Classes-Constructors-Methods-and-Properties](04-Classes-Constructors-Methods-and-Properties)
 1. [Class-Inheritance](05-Class-Inheritance)
 1. [Workshop](06-Workshop)
+1. [Exam Practice](07-Exam-Practice)
