@@ -33,9 +33,27 @@ function solve() {
 		}
 	}
 
+	function listObjects(arr, page, size, sortByProp, thenByProp) {
+		if (page < 0 || size <= 0 || page * size >= arr.length) {
+			throw Error('Invalid parameters!');
+		}
+
+		return arr
+			.slice()
+			.sort((a, b) => {
+				if (a[sortByProp] !== b[sortByProp]) {
+					return a[sortByProp] - b[sortByProp];
+				} else {
+					return a[thenByProp] - b[thenByProp];
+				}
+			})
+			.slice(page * size, (page * size) + size);
+	}
+
 	class Player {
 		constructor(name) {
 			this.name = name;
+			this._playlists = [];
 		}
 
 		get name() {
@@ -46,31 +64,78 @@ function solve() {
 		}
 
 		addPlaylist(playlistToAdd) {
-			// TODO
+			if (!(playlistToAdd instanceof Playlist)) {
+				throw Error('Cannot add this type of playlist!');
+			}
+
+			this._playlists.push(playlistToAdd);
+			return this;
 		}
 
 		getPlaylistById(id) {
-			// TODO
+			const found = this._playlists.find(p => p.id === id);
+			return found === undefined ? null : found;
 		}
 
-		removePlaylist(id) {
-			// TODO
-		}
+		removePlaylist(value) {
+			let playlistToRemoveIndex;
 
-		removePlaylist(playlist) {
-			// TODO
+			switch (typeof value) {
+				case 'number': // value is id
+					playlistToRemoveIndex = this._playlists.findIndex(p => p.id === value);
+
+					if (playlistToRemoveIndex < 0) {
+						throw Error('There is no playlist with this id!');
+					}
+
+					this._playlists.splice(playlistToRemoveIndex, 1);
+
+					return this;
+
+				case 'object': // value is playlist
+				case 'Playlist':
+					if (value.id === undefined) {
+						throw Error('Value is not a playlist');
+					}
+
+					playlistToRemoveIndex = this._playlists.findIndex(p => p.id === value.id);
+					this._playlists.splice(playlistToRemoveIndex, 1);
+
+					return this;
+
+				default:
+					return this;
+			}
+
 		}
 
 		listPlaylists(page, size) {
-			// TODO
+			return listObjects(this._playlists, page, size, 'name', 'id');
 		}
 
 		contains(playable, playlist) {
-			// TODO
+			//const pl = this._playlists.find(p => p.id === playlist.id);
+
+			return playlist.getPlayableById(playable.id) === null ? false : true;
 		}
 
 		search(pattern) {
-			// TODO
+			//const rgx = /pattern/g;
+
+			return this._playlists
+				.slice()
+				.forEach(plist => plist
+					.forEach(playable => playable
+						.filter(song => song.title.contains(pattern))// rgx.test(song.title))
+						.map(song => {
+							return {
+								title: song.title,
+								id: song.id
+							}
+						})
+					)
+				)
+
 		}
 	}
 
@@ -212,46 +277,30 @@ function solve() {
 
 					return this;
 
-				default: return this;
+				default:
+					return this;
 			}
 		}
 
 		listPlayables(page, size) {
-			if (page < 0 || size <= 0 || page * size >= this._playablesList.length) {
-				throw Error('Invalid parameters!');
-			}
-
-			return this._playablesList
-				.slice()
-				.sort((a, b) => {
-					if (a.title !== b.title) {
-						return a.title - b.title;
-					} else {
-						return a.id - b.id;
-					}
-				})
-				.slice(page * size, (page * size) + size);
+			return listObjects(this._playablesList, page, size, 'title', 'id');
 		}
 	}
 
 	class Module {
 		getPlayer(name) {
-			// returns a new player instance with the provided name
 			return new Player(name);
 		}
 
 		getPlaylist(name) {
-			//returns a new playlist instance with the provided name
 			return new Playlist(name);
 		}
 
 		getAudio(title, author, length) {
-			//returns a new audio instance with the provided title, author and length
 			return new Audio(title, author, length);
 		}
 
 		getVideo(title, author, imdbRating) {
-			//returns a new video instance with the provided title, author and imdbRating
 			return new Video(title, author, imdbRating);
 		}
 	};
